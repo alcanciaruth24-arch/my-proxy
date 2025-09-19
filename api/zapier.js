@@ -1,5 +1,6 @@
 api/zapier.js
 // api/zapier.js
+
 export default async function handler(req, res) {
   // Allow CORS
   res.setHeader("Access-Control-Allow-Origin", "https://www.theinvestorsloan.com");
@@ -8,16 +9,16 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
   if (req.method === "OPTIONS") {
-    return res.status(200).end(); // quick response for preflight
+    // Preflight request
+    return res.status(200).end();
   }
 
   try {
     const zapierUrl = process.env.ZAPIER_WEBHOOK_URL;
-
     if (!zapierUrl) {
       return res.status(500).json({
         success: false,
-        error: "Zapier webhook not configured (env var ZAPIER_WEBHOOK_URL missing)",
+        error: "Zapier webhook not configured (env var ZAPIER_WEBHOOK_URL missing)"
       });
     }
 
@@ -31,11 +32,17 @@ export default async function handler(req, res) {
 
     const text = await zapierRes.text();
 
-    return res.status(200).json({ success: true, zapier_response: text });
+    // Return friendly response to browser
+    return res.status(200).json({
+      success: true,
+      zapier_response: text
+    });
+
   } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({
+      success: false,
+      error: err.message
+    });
   }
 }
-
-
 
